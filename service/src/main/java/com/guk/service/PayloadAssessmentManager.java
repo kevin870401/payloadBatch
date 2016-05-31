@@ -1,12 +1,12 @@
 package com.guk.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import com.guk.domain.Assessment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class PayloadAssessmentManager {
 
@@ -20,16 +20,23 @@ public class PayloadAssessmentManager {
 
     }
 
-    public String getAssessments() {
+    public List getAssessments() {
 
-
-        String response = restTemplate.getForObject(sleepyPuppyUrl+"/api/assessments", String.class);
-
-
-        //String result = response.getRandomUserResults().get(0).getRandomUserResultLogin().getUsername();
-
-        return response;
+        ResponseEntity<Assessment[]> responseEntity = restTemplate.getForEntity(sleepyPuppyUrl+"/api/assessments", Assessment[].class);
+        Assessment[] assessments =responseEntity.getBody();
+        return Arrays.asList(assessments);
     }
 
+    public String getPuppyScripts() {
+        String response = restTemplate.getForObject(sleepyPuppyUrl+"/api/puppyscript", String.class);
+        return response;
+    }
+    public List getPayloads(long assessmentId) {
+
+
+        ResponseEntity<String[]> responseEntity = restTemplate.getForEntity(sleepyPuppyUrl+"/api/assessment_payloads/"+assessmentId, String[].class);
+        String[] payloads =responseEntity.getBody();
+        return Arrays.asList(payloads);
+    }
 
 }

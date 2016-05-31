@@ -1,6 +1,10 @@
 package com.guk.config;
 
+import com.guk.service.AttackService;
 import com.guk.service.PayloadAssessmentManager;
+import com.guk.service.PayloadService;
+import com.guk.service.impl.AttackServiceImpl;
+import com.guk.service.impl.PayloadServiceImpl;
 import com.guk.service.interceptor.HeaderRequestInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +32,9 @@ public class ServiceContext {
     @Value("${token.sleepy.puppy}")
     private String sleepyPuppyToken;
 
+    @Value("${url.defender}")
+    private String defenderUrl;
+
     @Bean
     public RestTemplate restTemplate() {
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
@@ -35,7 +42,7 @@ public class ServiceContext {
         interceptors.add(new HeaderRequestInterceptor("Token", sleepyPuppyToken));
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setInterceptors(interceptors);
-        return new RestTemplate();
+        return restTemplate;
     }
 
     @Bean
@@ -43,7 +50,14 @@ public class ServiceContext {
         return new PayloadAssessmentManager(restTemplate(), sleepyPuppyUrl);
     }
 
+    @Bean
+    public PayloadService payloadService() {
+        return new PayloadServiceImpl(payloadAssessmentManager());
+    }
 
-
+    @Bean
+    public AttackService attackService(){
+        return new AttackServiceImpl(payloadService(),defenderUrl);
+    }
 
 }
