@@ -30,7 +30,7 @@ public class AttackServiceImpl implements AttackService {
 
         List<String> payloads= payloadService.getPayload(assessmentId);
         for(String payload:payloads){
-            MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+            MultiValueMap<String, String> map = new LinkedMultiValueMap();
             map.add("name", payload);
             String result = restTemplate.postForObject(defenderUrl, map, String.class);
             System.out.println(result);
